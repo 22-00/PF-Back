@@ -30,7 +30,6 @@ const enviarMail = async (email, name) => {
   };
 
   const info = await transport.sendMail(mensaje);
-  console.log(info);
   return info;
 };
 
