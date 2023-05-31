@@ -70,14 +70,27 @@ productRouter.get("/", async (req, res) => {
       res.status(500).json({ message: error.message })
   }
 })
-
+productRouter.get('/imagen/todas', async (req, res) => {
+  try {
+    const productImages = await Product.findAll({
+      attributes: [ 'id','name' ,'image'],
+      limit: 4
+    });
+    res.json(productImages)
+  } catch (error) {
+    console.log(error.message);
+  }
+})
 // productRouter.get("/", async (req, res) => {
 //   try {
-//     const { name, size = 0, page = 10, sort, sortBy } = req.query;
+//     const { name, size = 5, page = 0, sort, sortBy } = req.query;
+
+//     // Restar 1 al valor de la página
+//     const adjustedPage = Math.max(Number(page) - 1, 0);
 
 //     let option = {
 //       limit: Number(size),
-//       offset: Number(page) * Number(size),
+//       offset: adjustedPage * Number(size),
 //       include: Dessert,
 //       order: []
 //     };
@@ -91,7 +104,7 @@ productRouter.get("/", async (req, res) => {
 //     if (name) {
 //       let optionName = {
 //         limit: Number(size),
-//         offset: Number(page) * Number(size),
+//         offset: adjustedPage * Number(size),
 //         where: {
 //           name: {
 //             [Op.iLike]: `%${name}%`,
@@ -120,25 +133,21 @@ productRouter.get("/", async (req, res) => {
 //   }
 // });
 
+
 //se agrego un controlador que hace un pedido a una api creada por url
 productRouter.post("/", async (req, res) => {
   try {
     let { name, summary, description, price, desserts, image } = req.body;
-    
+    //
     // Aquí se carga la imagen en Cloudinary
     
-    const result = await cloudinary.uploader.upload(image , {
+    const result = await cloudinary.uploader.upload(image, {
       folder: "img",
     });
-    // fs.unlink(req.file.path, (err) => { 
-      //   if (err) {
-        //     console.error(err);
-        //   }
-        // });
-        console.log(result)
-        const existingProduct = await Product.findOne({ where: { name } });
-        if (existingProduct) {
 
+    
+    const existingProduct = await Product.findOne({ where: { name } });
+        if (existingProduct) {
           return res.status(400).json({ message: "Product name already exists" });
         }
     const newProduct = await Product.create({
@@ -164,13 +173,13 @@ productRouter.post("/", async (req, res) => {
       res.status(404).json({ message: "Product not created" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error.body);
     res.status(500).json({ message: error.message });
   }
-});       
+});             
 
 
-productRouter.put("/:id", async (req, res) => {
+productRouter.put("/:id",async (req, res) => {
   const { id } = req.params;
   const { name, price, description, summary, image } = req.body;
 
@@ -179,14 +188,23 @@ productRouter.put("/:id", async (req, res) => {
 
     if (!product) {
       return res.status(404).json({ message: `Product with id ${id} not found` });
-    }
+    } 
+      if (image) {
+
+        const result = await cloudinary.uploader.upload(image, {
+          folder: "img",
+        });
+        product.image = result.secure_url || product.image
+        await product.save()
+        
+      }
+    
 
     product.name = name || product.name;
     product.price = price || product.price;
     product.description = description || product.description;
     product.summary = summary || product.summary
-    product.image = image || product.image
-
+    product.image = product.image
     await product.save();
 
     res.json({ status: `the ${product.name} product was successfully modified`, product });

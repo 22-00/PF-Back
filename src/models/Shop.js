@@ -2,24 +2,35 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   // Definir el modelo
-  sequelize.define("Review", {
+  sequelize.define("Shoping", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false,
       autoIncrement: true,
     },
-    comment: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+    cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1
     },
-    qualification: {
+    price:{
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      unique: false
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: false
     }
   }, {
     timestamps: true,
     freezeTableName: true,
-    tableName: "review",
+    tableName: "Shoping",
   });
 };

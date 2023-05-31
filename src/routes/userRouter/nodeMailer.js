@@ -10,6 +10,9 @@ const enviarMail = async (email, name) => {
       user: NM_EMAIL,
       pass: NM_PASSWORD,
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
   };
   const transport = nodemailer.createTransport(config);
 
@@ -32,5 +35,6 @@ const enviarMail = async (email, name) => {
   const info = await transport.sendMail(mensaje);
   return info;
 };
-
+ // const IDcliente = 781787972829-6oaasrp4vfoe34t3fkbd02bqv1vpktjm.apps.googleusercontent.com
+ // const secretoDelCliente = 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
 module.exports = enviarMail;
