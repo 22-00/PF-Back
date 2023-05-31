@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
       allowNull: false,
       autoIncrement: true
-    },
+    },// modificar tablas
     name: {
       type: DataTypes.STRING,
       allowNull: false,
