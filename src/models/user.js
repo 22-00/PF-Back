@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
       allowNull: false,
       autoIncrement: true
-    },// por que no se actualizan las tablas :(
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
